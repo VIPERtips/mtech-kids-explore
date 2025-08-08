@@ -8,8 +8,8 @@
   "scripts": {
     "dev": "cross-env ELECTRON_IS_DEV=true vite --port 8081",
     "dev:electron": "concurrently -k \"npm run dev\" \"wait-on http://localhost:8081 && electron .\"",
-    "build": "vite build",
-    "dist": "npm run build && electron-builder --win --x64 --publish never"
+    "build": "vite build ",
+    "dist": "npm run build && electron-builder --win --x64 --ia32 --publish never"
   },
   "build": {
   "appId": "com.blexta.mtech",
@@ -29,18 +29,29 @@
     "buildResources": "assets"
   },
   "win": {
-    "target": [
-      "portable"
-    ],
-    "icon": "mtech.ico"
-  },
-  "nsis": {
-    "oneClick": false,
-    "allowToChangeInstallationDirectory": true,
-    "createDesktopShortcut": true,
-    "createStartMenuShortcut": true,
-    "shortcutName": "MtechAcademyApp"
-  }
+    "certificateFile": "C:/Windows/System32/cert.pfx",
+    "certificatePassword": "2004",
+    "publisherName": "BLEXTA Technologies",
+  "target": [
+    
+    {
+      "target": "portable",
+      "arch": ["x64", "ia32"]
+    },
+    {
+      "target": "nsis",
+      "arch": ["x64", "ia32"]
+    }
+  ],
+  "icon": "mtech.ico"
+},
+"nsis": {
+  "oneClick": false,
+  "allowToChangeInstallationDirectory": true,
+  "createDesktopShortcut": true,
+  "createStartMenuShortcut": true,
+  "shortcutName": "MtechAcademyApp"
+}
 },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -125,6 +136,7 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
+    "vite-plugin-static-copy": "^3.1.1",
     "wait-on": "^8.0.3"
   }
 }

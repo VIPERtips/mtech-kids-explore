@@ -1,5 +1,5 @@
 
-import api from '@/lib/api';
+import { getApi as api } from './initApi';
 
 // Tracking interval in seconds
 const TRACKING_INTERVAL = 60; 
@@ -68,7 +68,7 @@ class UserTrackingService {
       const currentPath = window.location.pathname;
       const timestamp = new Date().toISOString();
       
-      api.post('/tracking/pageview', {
+      api().post('/tracking/pageview', {
         userId: this.userId,
         path: currentPath,
         timestamp,
@@ -84,7 +84,7 @@ class UserTrackingService {
     if (!this.userId || !this.isTracking) return;
     
     try {
-      api.post('/tracking/heartbeat', {
+      api().post('/tracking/heartbeat', {
         userId: this.userId,
         timestamp: new Date().toISOString()
       }).catch(err => console.error('Error sending heartbeat:', err));
@@ -101,7 +101,7 @@ class UserTrackingService {
     if (sessionDuration < 5) return; // Ignore very short sessions
     
     try {
-      api.post('/tracking/session', {
+      api().post('/tracking/session', {
         userId: this.userId,
         duration: sessionDuration,
         endTime: new Date().toISOString()

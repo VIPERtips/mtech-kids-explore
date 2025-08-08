@@ -4,16 +4,28 @@ const { app, BrowserWindow, screen, ipcMain } = require('electron');
 
 const isDev = process.env.ELECTRON_IS_DEV === 'true' || !app.isPackaged;
 
+// Setup logger
+function log(msg) {
+  const logFile = path.join(app.getPath('userData'), 'app.log');
+  fs.appendFileSync(logFile, `[${new Date().toISOString()}] ${msg}\n`);
+  console.log(msg);
+}
+
+// Load config
 function loadConfig() {
   const configPath = app.isPackaged
     ? path.join(process.resourcesPath, 'config.json')
     : path.join(__dirname, 'config.json');
 
+  log(`CONFIG PATH: ${configPath}`);
+
   try {
     const raw = fs.readFileSync(configPath, 'utf-8');
-    return JSON.parse(raw);
+    const parsed = JSON.parse(raw);
+    log(`Loaded config: ${JSON.stringify(parsed)}`);
+    return parsed;
   } catch (err) {
-    console.error('Failed to load config.json:', err);
+    log(`Failed to load config.json: ${err.message}`);
     return {
       apiBaseUrl: 'http://localhost:8080/api' // fallback
     };
@@ -35,7 +47,6 @@ function createWindow() {
     },
   });
 
-  // Send config to preload
   ipcMain.handle('get-config', () => config);
 
   win.setMenuBarVisibility(false);
@@ -44,11 +55,14 @@ function createWindow() {
     win.loadURL('http://localhost:8081');
     win.webContents.openDevTools();
   } else {
-    win.loadFile(path.join(__dirname, 'dist', 'index.html'));
+    const filePath = path.join(__dirname, 'dist', 'index.html');
+    log(`Loading production file: ${filePath}`);
+    win.loadFile(filePath);
   }
 
   win.webContents.on('did-fail-load', (event, code, desc, validatedURL) => {
-    console.error(`Failed to load ${validatedURL}: ${desc} (${code})`);
+    const msg = `Failed to load ${validatedURL}: ${desc} (${code})`;
+    log(msg);
     if (isDev) {
       setTimeout(() => win.loadURL('http://localhost:8081'), 1000);
     }

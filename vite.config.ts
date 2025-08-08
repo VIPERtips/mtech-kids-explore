@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -23,13 +24,21 @@ export default defineConfig(async ({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    optimizeDeps:{
+    optimizeDeps: {
       exclude: ["electron", "fs", "path"],
     },
     build: {
       rollupOptions: {
-        external: ['fs', 'path', 'electron'],  // exclude Node built-ins from bundling
-      }
+        external: mode === "production" ? [] : ["electron", "fs", "path"],
+        output: {
+          format: "es"
+        }
+      },
+      target: "esnext",
+      minify: false
+    },
+    define: {
+      global: "globalThis",
     }
   };
 });

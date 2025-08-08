@@ -55,7 +55,8 @@ import {
 } from "@/services/apiService";
 import { useIsMobile } from "@/hooks/use-mobile";
 import StudentAccountCreation from "../student/StudentAccountCreation";
-import api, { teacherService } from "@/lib/api";
+import { teacherService } from "@/lib/api";
+import { getApi as api} from "@/lib/initApi";
 import { PaginatedResponse, Student } from "../types/apiTypes";
 import { capitalize } from "@/utils/stringUtils";
 import QuizManagement from "../QuizManagement";
@@ -170,7 +171,7 @@ const TeacherDashboard: React.FC = () => {
   const fetchStudents = async () => {
     setIsStudentsLoading(true);
     try {
-      const response: PaginatedResponse<Student> = await api.get(
+      const response: PaginatedResponse<Student> = await api().get(
         "/teacher/students"
       );
       console.log("fetched students paginated response", response);

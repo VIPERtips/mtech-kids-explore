@@ -7,6 +7,7 @@ import { AdminResource } from '../types/adminTypes';
 import DocumentViewer from '../DocumentViewer';
 import { capitalize } from '@/utils/stringUtils';
 import toReadableDate from '@/utils/toReadableDate';
+import { getApi } from '@/lib/initApi';
 
 interface AdminResourceViewerProps {
   resource: AdminResource;
@@ -27,7 +28,7 @@ const AdminResourceViewer: React.FC<AdminResourceViewerProps> = ({ resource, onC
   // Format content URL
   const contentUrl = response.content.startsWith('http') 
     ? response.content 
-    : `http://localhost:8080/uploads/${response.content}`;
+    : `${getApi}/uploads/${response.content}`;
 
   const handlePlayPause = () => {
     if (videoRef.current) {

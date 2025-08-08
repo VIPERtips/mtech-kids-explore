@@ -10,6 +10,7 @@ import { Loader2, Book, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/context/AuthContext';
 import axios from 'axios';
+import { getApi } from '@/lib/initApi';
 
 const mockCreateCourse = async (courseData: any) => {
   // Simulate API delay
@@ -44,7 +45,7 @@ const CourseCreation = () => {
 
     try {
       
-      await axios.post('http://localhost:8080/api/courses', formData);
+      await axios.post(`${getApi}/api/courses`, formData);
       
       toast({
         title: "Course Created",

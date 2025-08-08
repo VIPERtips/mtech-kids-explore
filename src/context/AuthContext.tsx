@@ -2,12 +2,8 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { authService } from "@/lib/api";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
 import { getCompletedResources } from "@/services/apiService";
-
-// Set base URL for API requests
-axios.defaults.baseURL = "http://localhost:8080";
-
+import { authApi } from "@/lib/auth";
 interface User {
   id?: string;
   fullName: string;
@@ -123,7 +119,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const login = async (username: string, password: string) => {
     try {
       setIsLoading(true);
-      const response = await axios.post("/api/auth/login", {
+      const response = await authApi.post("/auth/login", {
         username,
         password,
       });
@@ -146,26 +142,30 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem("auth_token", token);
         localStorage.setItem("refresh_token", refreshToken);
 
-       let completedLessons: any[] = [];
+        let completedLessons: any[] = [];
 
-try {
-  const completedRes = await getCompletedResources();
-  console.log(completedRes, "completed");
+        try {
+          const completedRes = await getCompletedResources();
+          console.log(completedRes, "completed");
 
-  if (completedRes) {
-    const allCompleted = completedRes;
+          if (completedRes) {
+            const allCompleted = completedRes;
 
-    completedLessons = Object.values(allCompleted)
-      .flatMap((subjectGroup: any) =>
-        Object.values(subjectGroup).flatMap((resources: any[]) => resources)
-      );
+            completedLessons = Object.values(allCompleted).flatMap(
+              (subjectGroup: any) =>
+                Object.values(subjectGroup).flatMap(
+                  (resources: any[]) => resources
+                )
+            );
 
-    console.log("🔥 Full Completed Lessons:", completedLessons);
-  }
-} catch (fetchError) {
-  console.warn("Failed to fetch completed lessons after login", fetchError);
-}
-
+            console.log("🔥 Full Completed Lessons:", completedLessons);
+          }
+        } catch (fetchError) {
+          console.warn(
+            "Failed to fetch completed lessons after login",
+            fetchError
+          );
+        }
 
         const userData: User = {
           fullName,
@@ -179,7 +179,7 @@ try {
           role,
           status,
           earnedBadges: earnedBadges || [],
-         completedLessons: completedLessons || [],
+          completedLessons: completedLessons || [],
           progress: {},
         };
 
@@ -188,7 +188,7 @@ try {
 
         toast({
           title: "Login Successful",
-          description: response.data.message || "You're in!"
+          description: response.data.message || "You're in!",
         });
 
         // Handle route restoration after successful login
@@ -230,8 +230,8 @@ try {
         gradeLevel: grade,
       };
 
-      const response = await axios.post(
-        `/api/auth/register?role=${role}`,
+      const response = await authApi.post(
+        `/auth/register?role=${role}`,
         requestData
       );
       // console.log("registration response",response);
@@ -262,8 +262,8 @@ try {
   const confirmOtp = async (email: string, otp: string) => {
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        `/api/auth/confirm-otp?email=${email}&otp=${otp}`
+      const response = await authApi.post(
+        `/auth/confirm-otp?email=${email}&otp=${otp}`
       );
 
       if (response.data.success) {
@@ -290,7 +290,7 @@ try {
   const requestOtp = async (email: string) => {
     try {
       setIsLoading(true);
-      const response = await axios.post(`/api/auth/request-otp?email=${email}`);
+      const response = await authApi.post(`/auth/request-otp?email=${email}`);
       toast({
         title: "OTP Sent",
         description: "Check your email for the verification code",
@@ -349,8 +349,8 @@ try {
   const forgotPassword = async (email: string) => {
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        `/api/auth/forgot-password?email=${email}`
+      const response = await authApi.post(
+        `/auth/forgot-password?email=${email}`
       );
       toast({
         title: "Email Sent",
@@ -372,8 +372,8 @@ try {
   const resetPassword = async (token: string, password: string) => {
     try {
       setIsLoading(true);
-      const response = await axios.post(
-        `/api/auth/reset-password?token=${token}&newPassword=${password}`
+      const response = await authApi.post(
+        `/auth/reset-password?token=${token}&newPassword=${password}`
       );
       toast({
         title: "Password Reset",
@@ -397,8 +397,8 @@ try {
       const refreshToken = localStorage.getItem("refresh_token");
       if (!refreshToken) throw new Error("No refresh token available");
 
-      const response = await axios.post(
-        `/api/auth/refresh-token?refreshToken=${refreshToken}`
+      const response = await authApi.post(
+        `/auth/refresh-token?refreshToken=${refreshToken}`
       );
 
       if (response.data.success) {

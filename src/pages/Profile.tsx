@@ -9,7 +9,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { User, Settings, BookOpen, Award, BarChart3, CheckCircle, Users, PenTool } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import ProfileEdit from '@/components/ProfileEdit';
-import api, { teacherService } from '@/lib/api';
+import  { teacherService } from '@/lib/api';
+import { getApi as api } from '@/lib/initApi';
 import { PaginatedResponse, Student } from '@/components/types/apiTypes';
 import { toast } from '@/components/ui/use-toast';
 import { getTotalStats } from '@/services/apiService';
@@ -75,7 +76,7 @@ const Profile = () => {
   const fetchStudents = async () => {
     setIsStudentsLoading(true);
     try {
-      const response: PaginatedResponse<Student> = await api.get("/teacher/students");
+      const response: PaginatedResponse<Student> = await api().get("/teacher/students");
       console.log("fetched students paginated response", response);
 
       

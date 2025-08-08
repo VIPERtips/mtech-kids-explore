@@ -23,6 +23,7 @@ import {
 import { userTrackingService } from "@/lib/userTracking";
 import { completionService } from "@/services/completionService";
 import { useCompletion } from "@/context/CompletionContext";
+import { getApi } from "@/lib/initApi";
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.js";
@@ -54,7 +55,7 @@ const DocumentViewer: React.FC<DocumentViewerProps> = ({
   // Format document URL correctly for offline use
   const formattedDocUrl = documentUrl.startsWith("http")
     ? documentUrl
-    : `http://localhost:8080/uploads/${documentUrl}`;
+    : `${getApi}/uploads/${documentUrl}`;
 
   useEffect(() => {
     // Mark document as opened

@@ -1,5 +1,5 @@
 
-import api from '@/lib/api';
+import { getApi as api } from "./initApi";
 
 // Badge types
 export type BadgeType = 
@@ -84,7 +84,7 @@ class BadgeService {
   // Check if user qualifies for new badges
   async checkForBadges(userId: string): Promise<void> {
     try {
-      const response = await api.get(`/users/${userId}/activity-stats`);
+      const response = await api().get(`/users/${userId}/activity-stats`);
       const stats = response.data;
       const currentBadges = await this.getUserBadges(userId);
       const newBadges = this.processStats(stats, currentBadges);
@@ -158,7 +158,7 @@ class BadgeService {
   // Get user's current badges
   async getUserBadges(userId: string): Promise<string[]> {
     try {
-      const response = await api.get(`/users/${userId}/badges`);
+      const response = await api().get(`/users/${userId}/badges`);
       return response.data.map((badge: any) => badge.type);
     } catch (error) {
       console.error('Error getting user badges:', error);
@@ -169,7 +169,7 @@ class BadgeService {
   // Award badges to user
   private async awardBadges(userId: string, badgeTypes: BadgeType[]): Promise<void> {
     try {
-      await api.post(`/users/${userId}/badges`, { badges: badgeTypes });
+      await api().post(`/users/${userId}/badges`, { badges: badgeTypes });
     } catch (error) {
       console.error('Error awarding badges:', error);
     }

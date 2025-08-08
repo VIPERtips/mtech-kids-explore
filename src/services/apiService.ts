@@ -1,10 +1,12 @@
-import api, { 
+import  { 
   authService, 
   resourceService, 
   quizService,  
   adminService, 
   teacherService
 } from '@/lib/api';
+
+import { getApi as api} from '@/lib/initApi';
 
 
 import { PaginatedResponse, Student } from '@/components/types/apiTypes';
@@ -135,7 +137,7 @@ export const deleteResource = async (id: string) => {
 export const getQuizzes = async (gradeId?: string, subjectId?: string) => {
   try {
     const response = await quizService.getQuizzes(gradeId, subjectId);
-    console.log("response from api: ",response)
+    console.log("response from api(): ",response)
     return response.data;
   } catch (error) {
     console.error('Get quizzes error:', error);
@@ -166,7 +168,7 @@ export const submitQuiz = async (quizId: string, answers: any) => {
 // Quiz management services
 export const createQuiz = async (quizData: any) => {
   try {
-    const response = await api.post('/quiz', quizData);
+    const response = await api().post('/quiz', quizData);
     return response;
   } catch (error) {
     console.error('Create quiz error:', error);
@@ -176,7 +178,7 @@ export const createQuiz = async (quizData: any) => {
 
 export const updateQuiz = async (quizId: string, quizData: any) => {
   try {
-    const response = await api.put(`/quiz/${quizId}`, quizData);
+    const response = await api().put(`/quiz/${quizId}`, quizData);
     return response;
   } catch (error) {
     console.error('Update quiz error:', error);
@@ -186,7 +188,7 @@ export const updateQuiz = async (quizId: string, quizData: any) => {
 
 export const getAllQuizzes = async () => {
   try {
-    const response = await api.get('/quiz/all');
+    const response = await api().get('/quiz/all');
     return response;
   } catch (error) {
     console.error('Get all quizzes error:', error);
@@ -196,7 +198,7 @@ export const getAllQuizzes = async () => {
 
 export const deleteQuiz = async (quizId: string) => {
   try {
-    const response = await api.delete(`/quiz/${quizId}`);
+    const response = await api().delete(`/quiz/${quizId}`);
     return response;
   } catch (error) {
     console.error('Delete quiz error:', error);
@@ -208,7 +210,7 @@ export const uploadQuestions = async (quizId: string, file: File) => {
   try {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post(`/question/upload?id=${quizId}`, formData, {
+    const response = await api().post(`/question/upload?id=${quizId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response;
@@ -220,7 +222,7 @@ export const uploadQuestions = async (quizId: string, file: File) => {
 
 export const getQuizQuestions = async (quizId: string) => {
   try {
-    const response = await api.get(`/question/${quizId}`);
+    const response = await api().get(`/question/${quizId}`);
     return response;
   } catch (error) {
     console.error('Get quiz questions error:', error);
@@ -230,7 +232,7 @@ export const getQuizQuestions = async (quizId: string) => {
 
 export const deleteQuestion = async (questionId: string) => {
   try {
-    const response = await api.delete(`/question/${questionId}`);
+    const response = await api().delete(`/question/${questionId}`);
     return response;
   } catch (error) {
     console.error('Delete question error:', error);
@@ -241,7 +243,7 @@ export const deleteQuestion = async (questionId: string) => {
 
 export const submitQuizAttempt = async (quizId: string, score: number, total: number) => {
   try {
-    const response = await api.post(`/attempt/${quizId}?score=${score}&total=${total}`);
+    const response = await api().post(`/attempt/${quizId}?score=${score}&total=${total}`);
     return response.data;
   } catch (error) {
     console.error('Submit quiz score error:', error);
@@ -303,7 +305,7 @@ export const getStudentsCreatedByTeacher = async (
 // userService.ts (shared by admin and teacher)
 export const updateUserDetails = async (userId: string, updatedData: any) => {
   try {
-    const response = await api.put(`/users/${userId}`, updatedData);
+    const response = await api().put(`/users/${userId}`, updatedData);
     return response.data;
   } catch (error) {
     console.error('Update user details error:', error);
@@ -314,7 +316,7 @@ export const updateUserDetails = async (userId: string, updatedData: any) => {
 
 export const getAllStudents = async (): Promise<any> => {
   try {
-    const response = await api.get('/teacher/students');
+    const response = await api().get('/teacher/students');
     return response; // Response is already unwrapped by axios interceptor
   } catch (error) {
     console.error('Get all students error:', error);
@@ -438,7 +440,7 @@ export const getTeachersForAssignment = async () => {
 export const getStudentAttempts = async (page: number = 0, limit: number = 10) => {
 
   try {
-    const response = await api.get('/attempt/student', { params: { page, limit } });
+    const response = await api().get('/attempt/student', { params: { page, limit } });
     return response.data || response;
   } catch (error) {
     console.error('Get student attempts error:', error);
@@ -449,7 +451,7 @@ export const getStudentAttempts = async (page: number = 0, limit: number = 10) =
 // Teacher - Get all attempts for a specific quiz
 export const getQuizAttempts = async (quizId: string, page: number = 1, limit: number = 10) => {
   try {
-    const response = await api.get(`/attempt/quiz/${quizId}`, { params: { page, limit } });
+    const response = await api().get(`/attempt/quiz/${quizId}`, { params: { page, limit } });
     return response.data || response;
   } catch (error) {
     console.error('Get quiz attempts error:', error);
@@ -460,7 +462,7 @@ export const getQuizAttempts = async (quizId: string, page: number = 1, limit: n
 // Classroom management services
 export const getClassrooms = async (page: number = 1, limit: number = 10) => {
   try {
-    const response = await api.get('/classrooms', { params: { page, limit } });
+    const response = await api().get('/classrooms', { params: { page, limit } });
     return response.data || response;
   } catch (error) {
     console.error('Get classrooms error:', error);
@@ -470,7 +472,7 @@ export const getClassrooms = async (page: number = 1, limit: number = 10) => {
 
 export const getClassroomById = async (id: string) => {
   try {
-    const response = await api.get(`/classrooms/${id}`);
+    const response = await api().get(`/classrooms/${id}`);
     return response.data || response;
   } catch (error) {
     console.error('Get classroom error:', error);
@@ -480,7 +482,7 @@ export const getClassroomById = async (id: string) => {
 
 export const createClassroom = async (classroomData: { name: string; gradeLevel: string }) => {
   try {
-    const response = await api.post('/classrooms', classroomData);
+    const response = await api().post('/classrooms', classroomData);
     return response.data || response;
   } catch (error) {
     console.error('Create classroom error:', error);
@@ -490,7 +492,7 @@ export const createClassroom = async (classroomData: { name: string; gradeLevel:
 
 export const updateClassroom = async (id: string, classroomData: { name: string; gradeLevel: string }) => {
   try {
-    const response = await api.put(`/classrooms/${id}`, classroomData);
+    const response = await api().put(`/classrooms/${id}`, classroomData);
     return response.data || response;
   } catch (error) {
     console.error('Update classroom error:', error);
@@ -500,7 +502,7 @@ export const updateClassroom = async (id: string, classroomData: { name: string;
 
 export const deleteClassroom = async (id: string) => {
   try {
-    const response = await api.delete(`/classrooms/${id}`);
+    const response = await api().delete(`/classrooms/${id}`);
     return response.data || response;
   } catch (error) {
     console.error('Delete classroom error:', error);

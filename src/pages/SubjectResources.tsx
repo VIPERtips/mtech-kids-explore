@@ -56,6 +56,7 @@ import { Badge } from "@/components/ui/badge";
 import { useCompletion } from "@/context/CompletionContext";
 import { completionService } from "@/services/completionService";
 import { Quiz } from "@/components/types/apiTypes";
+import { getApi } from "@/lib/initApi";
 
 const SubjectResources = () => {
   const { gradeId: fullGradeId, subjectId } = useParams<{
@@ -144,7 +145,7 @@ const SubjectResources = () => {
         response.resources.map(async (resource) => {
           if (resource.response.type === "video") {
             //const thumbnail = await generateThumbnail(`http://localhost:8080/uploads/${resource.response.content}`);
-            const videoUrl = `http://localhost:8080/uploads/${resource.response.content}`;
+            const videoUrl = `${getApi}/uploads/${resource.response.content}`;
             const video = document.createElement("video");
             video.src = videoUrl;
             await new Promise((resolve) => {
@@ -724,7 +725,7 @@ const SubjectResources = () => {
                   }}
                 >
                   <source
-                    src={`http://localhost:8080/uploads/${selectedVideo.response.content}`}
+                    src={`{${getApi}/uploads/${selectedVideo.response.content}`}
                     type="video/mp4"
                   />
                   Your browser does not support the video tag.
