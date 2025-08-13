@@ -23,5 +23,3 @@ dist-ssr
 *.sln
 *.sw?
 
-# Electron runtime config
-/config.json
